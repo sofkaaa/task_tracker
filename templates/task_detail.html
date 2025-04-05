@@ -6,4 +6,6 @@
 <p>{{task.priority}}</p>
 <p>{{task.due_to}}</p>
 
+<a href="{% url 'task-edit' task.pk %}">Edit</a>
+<a href="#">Delete</a>
 {% endblock %}
