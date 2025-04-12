@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .mixins import UserIsOwnerMixin
@@ -9,12 +9,12 @@ from .models import Task
 from .forms import TaskForm
 # Create your views here.
 
-class TackListView(ListView):
+class TaskListView(ListView):
     model = Task
     template_name = "tasks_list.html"
 
     def get_queryset(self):
-        queryset = Task.objects.filter(status_ne = "done").exclude(a=True)
+        queryset = Task.objects.exclude(status="done").exclude(description=True)
         return queryset
 
 class TaskDetailView(DetailView):
@@ -39,4 +39,13 @@ class TaskEditView(UserIsOwnerMixin, UpdateView):
     model = Task
     form_class = TaskForm
     template_name = "task_create.html"
-    success_url = reverse_lazy("task-list")    
+    success_url = reverse_lazy("task-list")
+
+    def get_success_url(self):
+        url = reverse("task-detail", kwargs={"pk": self.get_object().pk})
+        return url
+
+class TaskDeleteView(UserIsOwnerMixin, DeleteView):
+    model = Task
+    template_name = "task_confirm_delete.html"
+    success_url = reverse_lazy("task-list")

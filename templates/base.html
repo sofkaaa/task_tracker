@@ -6,7 +6,21 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <nav>
+        <ul>
+            <li><a href="/">Головна</a></li>
+            <li>
+                {% if user.is_authenticated %}
+                    Hello, {{user.username}} <form action="{% url 'logout' %}" method="post"> {%csrf_token%}<input type="submit" value="Log out"> </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                {% endif %}
+            </li>
+
+            <li><a></a></li>
+
+        </ul>
+    </nav>
     {% block content %}
 
     {% endblock %}

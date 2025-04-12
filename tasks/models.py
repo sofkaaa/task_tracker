@@ -25,3 +25,10 @@ class Task(models.Model):
 
     due_to = models.DateTimeField(null= True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Coment(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    create_ad = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(null=True, auto_now=True)
