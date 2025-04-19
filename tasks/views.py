@@ -1,12 +1,13 @@
-from django.shortcuts import render
+from django.http import HttpRequest
+from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .mixins import UserIsOwnerMixin
 
-from .models import Task
-from .forms import TaskForm
+from .models import Task, Coment
+from .forms import TaskForm, CommentForm
 # Create your views here.
 
 class TaskListView(ListView):
@@ -19,8 +20,26 @@ class TaskListView(ListView):
 
 class TaskDetailView(DetailView):
     model = Task
-    template_name = "task_detail.html"
+    template_name = 'task_detail.html' 
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context["form"] = CommentForm()
+        return context
+    
+    def post(self, request: HttpRequest, *args, **kwargs):
+        if request.user.is_authenticated:
+            form = CommentForm(request.POST, request.FILES)
 
+            if form.is_valid():
+                new_coment:Coment = form.instance
+                new_coment.task = self.get_object()
+                new_coment.user = self.request.user
+                new_coment.save()
+
+            return redirect(request.path_info)
+        else: 
+            return HttpRequest(content = "Must bt authenticated", status = 403)
+  
 
 class TaskCreateView(LoginRequiredMixin,CreateView):
     model = Task
@@ -49,3 +68,21 @@ class TaskDeleteView(UserIsOwnerMixin, DeleteView):
     model = Task
     template_name = "task_confirm_delete.html"
     success_url = reverse_lazy("task-list")
+
+
+class ComentEditView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
+    model = Coment
+    form_class = CommentForm
+    template_name = "coment_edit.html"
+
+    def get_success_url(self):
+        return reverse("task-detail", kwargs={"pk": self.get_object().pk}) 
+
+
+class ComentDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
+    model = Coment
+    template_name = "coment_delete.html"
+
+    def get_success_url(self):
+        return reverse_lazy("task-detail", kwargs={"pk": self.get_object().pk})
+    

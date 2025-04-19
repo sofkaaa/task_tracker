@@ -1,22 +1,39 @@
-{% extends 'base.html'%}
+{% extends 'base.html' %}
 
 {% block content %}
-<h4>{{task.title}}</h4>
-<p>{{task.description}}</p>
-<p>{{task.priority}}</p>
-<p>{{task.due_to}}</p>
+<h4>{{ task.title }}</h4>
+<p>{{ task.description }}</p>
+<p>{{ task.priority }}</p>
+<p>{{ task.due_to }}</p>
 
 <a href="{% url 'task-edit' task.pk %}">Edit</a>
 <a href="{% url 'task-delete' task.pk %}">Delete</a>
 <hr>
-<ul> 
+
+<h3>Коментарі:</h3>
+<ul>
     {% for comment in task.coment_set.all %}
         <li>
-            <p>{{comment.user}}:</p>
-            <p>{{comment.content}}</p>
-            <p>{{comment.create_ad}}</p>
+            <p><strong>{{ comment.user }}</strong>:</p>
+            <p>{{ comment.content }}</p>
+            <p>{{ comment.created_at }}</p>
+            <p><img src="{{comment.coment_pic }}", width="350px"></p>
         </li>
+    {% empty %}
+        <li>Коментарів поки що немає.</li>
     {% endfor %}
 </ul>
+
+{% if user.is_authenticated %}
+<hr>
+<h4>Додати коментар:</h4>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Надіслати">
+</form>
+{% else %}
+<p>Щоб залишити коментар, <a href="{% url 'login' %}">увійдіть</a>.</p>
+{% endif %}
 
 {% endblock %}
