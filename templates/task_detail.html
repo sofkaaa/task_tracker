@@ -1,23 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="task-desc">
 <h4>{{ task.title }}</h4>
 <p>{{ task.description }}</p>
 <p>{{ task.priority }}</p>
 <p>{{ task.due_to }}</p>
 
-<a href="{% url 'task-edit' task.pk %}">Edit</a>
-<a href="{% url 'task-delete' task.pk %}">Delete</a>
+<a class="btn btn-warning" href="{% url 'task-edit' task.pk %}">Edit</a>
+<a class="btn btn-danger" href="{% url 'task-delete' task.pk %}">Delete</a>
+</div>
 <hr>
-
-<h3>Коментарі:</h3>
-<ul>
+<ul class="comment-list">
     {% for comment in task.coment_set.all %}
         <li>
-            <p><strong>{{ comment.user }}</strong>:</p>
-            <p>{{ comment.content }}</p>
-            <p>{{ comment.created_at }}</p>
-            <p><img src="{{comment.coment_pic }}", width="350px"></p>
+            <p>{{ comment.user }}</p>
+            <p class="comment-text">{{ comment.content }}</p>
+            {% if comment.coment_pic %}
+                <p><img src="{{comment.coment_pic.url }}" width="350px"></p>
+            {% endif %}
+            <p class="comment-date">--{{comment.created_at}}</p>
         </li>
     {% empty %}
         <li>Коментарів поки що немає.</li>

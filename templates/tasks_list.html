@@ -1,12 +1,21 @@
 {% extends 'base.html'%}
 
 {% block content %}
-<ul>
-    {% for task in task_list %}
-        <li>
-            <a href="{% url 'task-detail' task.id %}">{{task}}</a>
-        </li>
-    {% endfor%}
-</ul>
-<a href="{% url 'task-create' %}">Create new task</a>
+<div class="main-wrapper">
+    <div class="task-block">
+        <ul class="list-unstyled text-center">
+            {% for task in task_list %}
+                <li class="task-item mb-3">
+                    <a class="task-link" href="{% url 'task-detail' task.id %}">
+                        {{ task.title }}
+                    </a>
+                    <span class="badge ms-2 {% if task.priority == 'high' %} text-bg-danger {% elif task.priority == 'min' %} text-bg-success {% else %} text-bg-secondary {% endif %} ">
+                        {{ task.get_priority_display }}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+        <p><a class="create-task-btn btn btn-success mt-4" href="{% url 'task-create' %}">Create new task</a></p>
+    </div>
+</div>
 {% endblock %}
