@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Головна</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for task in recent_tasks %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ task.title }}</h5>
+                    <p class="card-text">{{ task.short_description|default:"Короткий опис відсутній." }}</p>
+                    <p class="card-text"><small class="text-muted">Складність: {{ task.get_priority_display }}</small></p>
+                    <a href="{% url 'task-detail' task.id %}" class="btn btn-dark">Детальніше</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col">
+            <p class="text-center">Немає активних завдань для відображення.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

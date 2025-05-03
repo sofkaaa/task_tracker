@@ -1,28 +1,33 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<div class="task-desc">
-<h4>{{ task.title }}</h4>
-<p>{{ task.description }}</p>
-<p>{{ task.priority }}</p>
-<p>{{ task.due_to }}</p>
+{% block title %}Деталі завдання{% endblock %}
 
-<a class="btn btn-warning" href="{% url 'task-edit' task.pk %}">Edit</a>
-<a class="btn btn-danger" href="{% url 'task-delete' task.pk %}">Delete</a>
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="card-title">{{ task.title }}</h2>
+        <p class="card-text">{{ task.description }}</p>
+        <p>Пріоритет: {{ task.get_priority_display }}</p>
+        <p>Виконати до: {{ task.due_to }}</p>
+
+        <a class="btn btn-dark" href="{% url 'task-edit' task.pk %}">Редагувати</a>
+        <a class="btn btn-dark" href="{% url 'task-delete' task.pk %}">Видалити</a>
+    </div>
 </div>
+
 <hr>
-<ul class="comment-list">
+<h4>Коментарі:</h4>
+<ul class="list-group">
     {% for comment in task.coment_set.all %}
-        <li>
-            <p>{{ comment.user }}</p>
-            <p class="comment-text">{{ comment.content }}</p>
+        <li class="list-group-item">
+            <strong>{{ comment.user }}</strong>: {{ comment.content }}
             {% if comment.coment_pic %}
-                <p><img src="{{comment.coment_pic.url }}" width="350px"></p>
+                <p><img src="{{comment.coment_pic.url }}" width="20%"></p>
             {% endif %}
-            <p class="comment-date">--{{comment.created_at}}</p>
+            <small class="text-muted">{{ comment.created_at }}</small>
         </li>
     {% empty %}
-        <li>Коментарів поки що немає.</li>
+        <li class="list-group-item">Коментарів поки що немає.</li>
     {% endfor %}
 </ul>
 
@@ -32,10 +37,9 @@
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Надіслати">
+    <input type="submit" value="Надіслати" class="btn btn-dark">
 </form>
 {% else %}
 <p>Щоб залишити коментар, <a href="{% url 'login' %}">увійдіть</a>.</p>
 {% endif %}
-
 {% endblock %}
